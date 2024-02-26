@@ -25,8 +25,28 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
+function getMaxCaloriesOnElf(elfs) {
+    let maxCaloriesOnElf = 0;
+    elfs.forEach((elf) => {
+        const currentTotal = getTotalCaloriesOnElf(elf);
+        maxCaloriesOnElf = currentTotal > maxCaloriesOnElf ? currentTotal : maxCaloriesOnElf;
+    });
+    return maxCaloriesOnElf;
+}
+function getTotalCaloriesOnElf(elf) {
+    let totalCaloriesOnElf = 0;
+    elf.inventory.forEach((calorie) => totalCaloriesOnElf += calorie);
+    return totalCaloriesOnElf;
+}
+/*---------Run code Below----------*/
 const input = fs.readFileSync(path.join(__dirname, './in.txt'), {
     encoding: 'utf-8'
 });
-console.log(input);
-const elfList = [];
+const inventoryStrings = input.split("\n\n");
+const elfList = inventoryStrings.map((elfString) => {
+    return {
+        inventory: elfString.split("\n").map((singleString) => Number(singleString))
+    };
+});
+const maxCaloriesOnElf = getMaxCaloriesOnElf(elfList);
+fs.writeFileSync('out.txt', String(maxCaloriesOnElf));
