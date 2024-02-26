@@ -48,5 +48,13 @@ const elfList = inventoryStrings.map((elfString) => {
         inventory: elfString.split("\n").map((singleString) => Number(singleString))
     };
 });
-const maxCaloriesOnElf = getMaxCaloriesOnElf(elfList);
-fs.writeFileSync('out.txt', String(maxCaloriesOnElf));
+const topElfAmount = 3;
+let topCalories = 0;
+let newElfList = elfList;
+for (let index = 0; index < topElfAmount; index++) {
+    const maxCaloriesOnElf = getMaxCaloriesOnElf(newElfList);
+    console.log(maxCaloriesOnElf);
+    topCalories += maxCaloriesOnElf;
+    newElfList = newElfList.filter((elf) => maxCaloriesOnElf !== getTotalCaloriesOnElf(elf));
+}
+fs.writeFileSync('out.txt', String(topCalories));
