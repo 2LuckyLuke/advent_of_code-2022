@@ -8,12 +8,33 @@ var RpsValues;
     RpsValues[RpsValues["PAPER"] = 2] = "PAPER";
     RpsValues[RpsValues["SCISSORS"] = 3] = "SCISSORS";
 })(RpsValues || (RpsValues = {}));
-var RspResult;
-(function (RspResult) {
-    RspResult[RspResult["LOSE"] = 0] = "LOSE";
-    RspResult[RspResult["DRAW"] = 3] = "DRAW";
-    RspResult[RspResult["WIN"] = 6] = "WIN";
-})(RspResult || (RspResult = {}));
+var RspResults;
+(function (RspResults) {
+    RspResults[RspResults["LOSE"] = 0] = "LOSE";
+    RspResults[RspResults["DRAW"] = 3] = "DRAW";
+    RspResults[RspResults["WIN"] = 6] = "WIN";
+})(RspResults || (RspResults = {}));
+function getPlayerMove(opponentValue, gameResult) {
+    switch (true) {
+        case gameResult === RspResults.DRAW:
+            return opponentValue;
+        case opponentValue === RpsValues.ROCK && gameResult === RspResults.WIN:
+            return RpsValues.PAPER;
+        case opponentValue === RpsValues.PAPER && gameResult === RspResults.WIN:
+            return RpsValues.SCISSORS;
+        case opponentValue === RpsValues.SCISSORS && gameResult === RspResults.WIN:
+            return RpsValues.ROCK;
+        case opponentValue === RpsValues.ROCK && gameResult === RspResults.LOSE:
+            return RpsValues.SCISSORS;
+        case opponentValue === RpsValues.PAPER && gameResult === RspResults.LOSE:
+            return RpsValues.ROCK;
+        case opponentValue === RpsValues.SCISSORS && gameResult === RspResults.LOSE:
+            return RpsValues.PAPER;
+        default:
+            console.log('unexpected player move');
+            return RpsValues.ROCK;
+    }
+}
 function getGameFromString(stringGame) {
     var stringValues = stringGame.split(' ');
     var opponentValue;
@@ -31,43 +52,43 @@ function getGameFromString(stringGame) {
             console.log('invalid String on 1');
             opponentValue = RpsValues.ROCK;
     }
-    var playerValue;
+    var gameResult;
     switch (stringValues[1]) {
         case 'X':
-            playerValue = RpsValues.ROCK;
+            gameResult = RspResults.LOSE;
             break;
         case 'Y':
-            playerValue = RpsValues.PAPER;
+            gameResult = RspResults.DRAW;
             break;
         case 'Z':
-            playerValue = RpsValues.SCISSORS;
+            gameResult = RspResults.WIN;
             break;
         default:
             console.log('invalid String on 2');
-            playerValue = RpsValues.ROCK;
+            gameResult = RspResults.LOSE;
     }
-    return { opponentValue: opponentValue, playerValue: playerValue };
+    return { opponentValue: opponentValue, playerValue: getPlayerMove(opponentValue, gameResult) };
 }
 function getGameResult(game) {
     var opponentValue = game.opponentValue, playerValue = game.playerValue;
     switch (true) {
         case opponentValue === playerValue:
-            return RspResult.DRAW;
+            return RspResults.DRAW;
         case opponentValue === RpsValues.ROCK && playerValue === RpsValues.PAPER:
-            return RspResult.WIN;
+            return RspResults.WIN;
         case opponentValue === RpsValues.ROCK && playerValue === RpsValues.SCISSORS:
-            return RspResult.LOSE;
+            return RspResults.LOSE;
         case opponentValue === RpsValues.PAPER && playerValue === RpsValues.ROCK:
-            return RspResult.LOSE;
+            return RspResults.LOSE;
         case opponentValue === RpsValues.PAPER && playerValue === RpsValues.SCISSORS:
-            return RspResult.WIN;
+            return RspResults.WIN;
         case opponentValue === RpsValues.SCISSORS && playerValue === RpsValues.ROCK:
-            return RspResult.WIN;
+            return RspResults.WIN;
         case opponentValue === RpsValues.SCISSORS && playerValue === RpsValues.PAPER:
-            return RspResult.LOSE;
+            return RspResults.LOSE;
         default:
             console.log('unexpected game values');
-            return RspResult.LOSE;
+            return RspResults.LOSE;
     }
 }
 function getGameScore(game) {

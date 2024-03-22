@@ -7,7 +7,7 @@ enum RpsValues {
     SCISSORS = 3
 }
 
-enum RspResult {
+enum RspResults {
     LOSE = 0,
     DRAW = 3,
     WIN = 6
@@ -16,6 +16,28 @@ enum RspResult {
 interface Game {
     opponentValue: RpsValues;
     playerValue: RpsValues;
+}
+
+function getPlayerMove(opponentValue: RpsValues, gameResult: RspResults): RpsValues {
+    switch (true) {
+        case gameResult === RspResults.DRAW:
+            return opponentValue;
+        case opponentValue === RpsValues.ROCK && gameResult === RspResults.WIN:
+            return RpsValues.PAPER;
+        case opponentValue === RpsValues.PAPER && gameResult === RspResults.WIN:
+            return RpsValues.SCISSORS;
+        case opponentValue === RpsValues.SCISSORS && gameResult === RspResults.WIN:
+            return RpsValues.ROCK;
+        case opponentValue === RpsValues.ROCK && gameResult === RspResults.LOSE:
+            return RpsValues.SCISSORS;
+        case opponentValue === RpsValues.PAPER && gameResult === RspResults.LOSE:
+            return RpsValues.ROCK;
+        case opponentValue === RpsValues.SCISSORS && gameResult === RspResults.LOSE:
+            return RpsValues.PAPER;
+        default:
+            console.log('unexpected player move');
+            return RpsValues.ROCK;
+    }
 }
 
 function getGameFromString(stringGame: string): Game {
@@ -35,44 +57,44 @@ function getGameFromString(stringGame: string): Game {
             console.log('invalid String on 1');
             opponentValue = RpsValues.ROCK;
     }
-    let playerValue: RpsValues;
+    let gameResult: RspResults;
     switch (stringValues[1]) {
         case 'X':
-            playerValue = RpsValues.ROCK;
+            gameResult = RspResults.LOSE;
             break;
         case 'Y':
-            playerValue = RpsValues.PAPER;
+            gameResult = RspResults.DRAW;
             break;
         case 'Z':
-            playerValue = RpsValues.SCISSORS;
+            gameResult = RspResults.WIN;
             break;
         default:
             console.log('invalid String on 2');
-            playerValue = RpsValues.ROCK;
+            gameResult = RspResults.LOSE;
     }
-    return { opponentValue, playerValue };
+    return { opponentValue, playerValue: getPlayerMove(opponentValue, gameResult) };
 }
 
-function getGameResult(game: Game): RspResult {
+function getGameResult(game: Game): RspResults {
     const { opponentValue, playerValue } = game;
     switch (true) {
         case opponentValue === playerValue:
-            return RspResult.DRAW;
+            return RspResults.DRAW;
         case opponentValue === RpsValues.ROCK && playerValue === RpsValues.PAPER:
-            return RspResult.WIN;
+            return RspResults.WIN;
         case opponentValue === RpsValues.ROCK && playerValue === RpsValues.SCISSORS:
-            return RspResult.LOSE;
+            return RspResults.LOSE;
         case opponentValue === RpsValues.PAPER && playerValue === RpsValues.ROCK:
-            return RspResult.LOSE;
+            return RspResults.LOSE;
         case opponentValue === RpsValues.PAPER && playerValue === RpsValues.SCISSORS:
-            return RspResult.WIN;
+            return RspResults.WIN;
         case opponentValue === RpsValues.SCISSORS && playerValue === RpsValues.ROCK:
-            return RspResult.WIN;
+            return RspResults.WIN;
         case opponentValue === RpsValues.SCISSORS && playerValue === RpsValues.PAPER:
-            return RspResult.LOSE;
+            return RspResults.LOSE;
         default:
             console.log('unexpected game values');
-            return RspResult.LOSE;
+            return RspResults.LOSE;
     }
 }
 
