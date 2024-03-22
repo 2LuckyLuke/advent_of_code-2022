@@ -1,32 +1,85 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const fs = __importStar(require("fs"));
-const path = __importStar(require("path"));
-const input = fs.readFileSync(path.join(__dirname, './in.txt'), {
-    encoding: 'utf-8'
-});
-console.log(input);
-const elfList = [];
+var fs = require("fs");
+var path = require("path");
+var RpsValues;
+(function (RpsValues) {
+    RpsValues[RpsValues["ROCK"] = 1] = "ROCK";
+    RpsValues[RpsValues["PAPER"] = 2] = "PAPER";
+    RpsValues[RpsValues["SCISSORS"] = 3] = "SCISSORS";
+})(RpsValues || (RpsValues = {}));
+var RspResult;
+(function (RspResult) {
+    RspResult[RspResult["LOSE"] = 0] = "LOSE";
+    RspResult[RspResult["DRAW"] = 3] = "DRAW";
+    RspResult[RspResult["WIN"] = 6] = "WIN";
+})(RspResult || (RspResult = {}));
+function getGameFromString(stringGame) {
+    var stringValues = stringGame.split(' ');
+    var opponentValue;
+    switch (stringValues[0]) {
+        case 'A':
+            opponentValue = RpsValues.ROCK;
+            break;
+        case 'B':
+            opponentValue = RpsValues.PAPER;
+            break;
+        case 'C':
+            opponentValue = RpsValues.SCISSORS;
+            break;
+        default:
+            console.log('invalid String on 1');
+            opponentValue = RpsValues.ROCK;
+    }
+    var playerValue;
+    switch (stringValues[1]) {
+        case 'X':
+            playerValue = RpsValues.ROCK;
+            break;
+        case 'Y':
+            playerValue = RpsValues.PAPER;
+            break;
+        case 'Z':
+            playerValue = RpsValues.SCISSORS;
+            break;
+        default:
+            console.log('invalid String on 2');
+            playerValue = RpsValues.ROCK;
+    }
+    return { opponentValue: opponentValue, playerValue: playerValue };
+}
+function getGameResult(game) {
+    var opponentValue = game.opponentValue, playerValue = game.playerValue;
+    switch (true) {
+        case opponentValue === playerValue:
+            return RspResult.DRAW;
+        case opponentValue === RpsValues.ROCK && playerValue === RpsValues.PAPER:
+            return RspResult.WIN;
+        case opponentValue === RpsValues.ROCK && playerValue === RpsValues.SCISSORS:
+            return RspResult.LOSE;
+        case opponentValue === RpsValues.PAPER && playerValue === RpsValues.ROCK:
+            return RspResult.LOSE;
+        case opponentValue === RpsValues.PAPER && playerValue === RpsValues.SCISSORS:
+            return RspResult.WIN;
+        case opponentValue === RpsValues.SCISSORS && playerValue === RpsValues.ROCK:
+            return RspResult.WIN;
+        case opponentValue === RpsValues.SCISSORS && playerValue === RpsValues.PAPER:
+            return RspResult.LOSE;
+        default:
+            console.log('unexpected game values');
+            return RspResult.LOSE;
+    }
+}
+function getGameScore(game) {
+    var score = 0;
+    score += Number(getGameResult(game));
+    return score + Number(game.playerValue);
+}
+/*---------Run code Below----------*/
+var input = fs.readFileSync(path.join(__dirname, './in.txt'), { encoding: 'utf-8' });
+var individualGames = input.split('\r\n');
+var games = [];
+individualGames.forEach(function (stringGame) { return games.push(getGameFromString(stringGame)); });
+var totalScore = 0;
+games.forEach(function (game) { return (totalScore += getGameScore(game)); });
+console.log(totalScore);
