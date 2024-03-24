@@ -21,11 +21,23 @@ function findError(rucksack) {
     }
     return 'no error found :|';
 }
+function findGroupBadge(rucksacksOfGroup) {
+    for (var i = 0; i < rucksacksOfGroup[0].length; i++) {
+        if (rucksacksOfGroup[1].includes(rucksacksOfGroup[0].charAt(i)) &&
+            rucksacksOfGroup[2].includes(rucksacksOfGroup[0].charAt(i))) {
+            return rucksacksOfGroup[0].charAt(i);
+        }
+    }
+    return 'no error found :|';
+}
 /*---------Run code Below----------*/
 var input = fs.readFileSync(path.join(__dirname, './in.txt'), { encoding: 'utf-8' });
 var combinedRucksacks = input.split('\r\n');
-var rucksacks = [];
-combinedRucksacks.forEach(function (combinedRucksack) { return rucksacks.push(getRucksack(combinedRucksack)); });
+var groups = [];
+for (var i = 0; i < combinedRucksacks.length; i++) {
+    groups.push([combinedRucksacks[i], combinedRucksacks[i + 1], combinedRucksacks[i + 2]]);
+    i += 2;
+}
 var totalPriority = 0;
-rucksacks.forEach(function (rucksack) { return (totalPriority += getPriority(findError(rucksack))); });
+groups.forEach(function (group) { return (totalPriority += getPriority(findGroupBadge(group))); });
 console.log(totalPriority);

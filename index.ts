@@ -29,13 +29,29 @@ function findError(rucksack: Rucksack): string {
     return 'no error found :|';
 }
 
+function findGroupBadge(rucksacksOfGroup: string[]): string {
+    for (let i = 0; i < rucksacksOfGroup[0].length; i++) {
+        if (
+            rucksacksOfGroup[1].includes(rucksacksOfGroup[0].charAt(i)) &&
+            rucksacksOfGroup[2].includes(rucksacksOfGroup[0].charAt(i))
+        ) {
+            return rucksacksOfGroup[0].charAt(i);
+        }
+    }
+    return 'no error found :|';
+}
+
 /*---------Run code Below----------*/
 
 const input = fs.readFileSync(path.join(__dirname, './in.txt'), { encoding: 'utf-8' });
 
 const combinedRucksacks: string[] = input.split('\r\n');
-const rucksacks: Rucksack[] = [];
-combinedRucksacks.forEach((combinedRucksack) => rucksacks.push(getRucksack(combinedRucksack)));
+const groups: string[][] = [];
+for (let i = 0; i < combinedRucksacks.length; i++) {
+    groups.push([combinedRucksacks[i], combinedRucksacks[i + 1], combinedRucksacks[i + 2]]);
+    i += 2;
+}
+
 let totalPriority = 0;
-rucksacks.forEach((rucksack) => (totalPriority += getPriority(findError(rucksack))));
+groups.forEach((group) => (totalPriority += getPriority(findGroupBadge(group))));
 console.log(totalPriority);
