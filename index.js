@@ -2,105 +2,30 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var path = require("path");
-var RpsValues;
-(function (RpsValues) {
-    RpsValues[RpsValues["ROCK"] = 1] = "ROCK";
-    RpsValues[RpsValues["PAPER"] = 2] = "PAPER";
-    RpsValues[RpsValues["SCISSORS"] = 3] = "SCISSORS";
-})(RpsValues || (RpsValues = {}));
-var RspResults;
-(function (RspResults) {
-    RspResults[RspResults["LOSE"] = 0] = "LOSE";
-    RspResults[RspResults["DRAW"] = 3] = "DRAW";
-    RspResults[RspResults["WIN"] = 6] = "WIN";
-})(RspResults || (RspResults = {}));
-function getPlayerMove(opponentValue, gameResult) {
-    switch (true) {
-        case gameResult === RspResults.DRAW:
-            return opponentValue;
-        case opponentValue === RpsValues.ROCK && gameResult === RspResults.WIN:
-            return RpsValues.PAPER;
-        case opponentValue === RpsValues.PAPER && gameResult === RspResults.WIN:
-            return RpsValues.SCISSORS;
-        case opponentValue === RpsValues.SCISSORS && gameResult === RspResults.WIN:
-            return RpsValues.ROCK;
-        case opponentValue === RpsValues.ROCK && gameResult === RspResults.LOSE:
-            return RpsValues.SCISSORS;
-        case opponentValue === RpsValues.PAPER && gameResult === RspResults.LOSE:
-            return RpsValues.ROCK;
-        case opponentValue === RpsValues.SCISSORS && gameResult === RspResults.LOSE:
-            return RpsValues.PAPER;
-        default:
-            console.log('unexpected player move');
-            return RpsValues.ROCK;
+function getPriority(letter) {
+    if (letter > 'Z') {
+        return letter.charCodeAt(0) - 96;
     }
+    return letter.charCodeAt(0) - 38;
 }
-function getGameFromString(stringGame) {
-    var stringValues = stringGame.split(' ');
-    var opponentValue;
-    switch (stringValues[0]) {
-        case 'A':
-            opponentValue = RpsValues.ROCK;
-            break;
-        case 'B':
-            opponentValue = RpsValues.PAPER;
-            break;
-        case 'C':
-            opponentValue = RpsValues.SCISSORS;
-            break;
-        default:
-            console.log('invalid String on 1');
-            opponentValue = RpsValues.ROCK;
-    }
-    var gameResult;
-    switch (stringValues[1]) {
-        case 'X':
-            gameResult = RspResults.LOSE;
-            break;
-        case 'Y':
-            gameResult = RspResults.DRAW;
-            break;
-        case 'Z':
-            gameResult = RspResults.WIN;
-            break;
-        default:
-            console.log('invalid String on 2');
-            gameResult = RspResults.LOSE;
-    }
-    return { opponentValue: opponentValue, playerValue: getPlayerMove(opponentValue, gameResult) };
+function getRucksack(combinedRucksack) {
+    var firstCompartment = combinedRucksack.slice(0, combinedRucksack.length / 2);
+    var secondCompartment = combinedRucksack.slice(combinedRucksack.length / 2, combinedRucksack.length);
+    return { first: firstCompartment, second: secondCompartment };
 }
-function getGameResult(game) {
-    var opponentValue = game.opponentValue, playerValue = game.playerValue;
-    switch (true) {
-        case opponentValue === playerValue:
-            return RspResults.DRAW;
-        case opponentValue === RpsValues.ROCK && playerValue === RpsValues.PAPER:
-            return RspResults.WIN;
-        case opponentValue === RpsValues.ROCK && playerValue === RpsValues.SCISSORS:
-            return RspResults.LOSE;
-        case opponentValue === RpsValues.PAPER && playerValue === RpsValues.ROCK:
-            return RspResults.LOSE;
-        case opponentValue === RpsValues.PAPER && playerValue === RpsValues.SCISSORS:
-            return RspResults.WIN;
-        case opponentValue === RpsValues.SCISSORS && playerValue === RpsValues.ROCK:
-            return RspResults.WIN;
-        case opponentValue === RpsValues.SCISSORS && playerValue === RpsValues.PAPER:
-            return RspResults.LOSE;
-        default:
-            console.log('unexpected game values');
-            return RspResults.LOSE;
+function findError(rucksack) {
+    for (var i = 0; i < rucksack.first.length; i++) {
+        if (rucksack.second.includes(rucksack.first.charAt(i))) {
+            return rucksack.first.charAt(i);
+        }
     }
-}
-function getGameScore(game) {
-    var score = 0;
-    score += Number(getGameResult(game));
-    return score + Number(game.playerValue);
+    return 'no error found :|';
 }
 /*---------Run code Below----------*/
 var input = fs.readFileSync(path.join(__dirname, './in.txt'), { encoding: 'utf-8' });
-var individualGames = input.split('\r\n');
-var games = [];
-individualGames.forEach(function (stringGame) { return games.push(getGameFromString(stringGame)); });
-var totalScore = 0;
-games.forEach(function (game) { return (totalScore += getGameScore(game)); });
-console.log(totalScore);
+var combinedRucksacks = input.split('\r\n');
+var rucksacks = [];
+combinedRucksacks.forEach(function (combinedRucksack) { return rucksacks.push(getRucksack(combinedRucksack)); });
+var totalPriority = 0;
+rucksacks.forEach(function (rucksack) { return (totalPriority += getPriority(findError(rucksack))); });
+console.log(totalPriority);
