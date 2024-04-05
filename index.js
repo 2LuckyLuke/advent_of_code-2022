@@ -40,6 +40,13 @@ function getPairFromString(pairString) {
     const pair = { firstRange, secondRange };
     return pair;
 }
+function isPairOverlapping(pair) {
+    if ((pair.firstRange.end >= pair.secondRange.start && pair.firstRange.start <= pair.secondRange.end) ||
+        (pair.secondRange.end >= pair.firstRange.start && pair.secondRange.start <= pair.firstRange.end)) {
+        return true;
+    }
+    return false;
+}
 function isRangeContained(pair) {
     if ((pair.firstRange.start <= pair.secondRange.start && pair.firstRange.end >= pair.secondRange.end) ||
         (pair.secondRange.start <= pair.firstRange.start && pair.secondRange.end >= pair.firstRange.end)) {
@@ -53,7 +60,7 @@ const pairStrings = input.split('\n');
 const pairs = pairStrings.map((pairString) => getPairFromString(pairString));
 let totalContainedPairs = 0;
 for (let i = 0; i < pairs.length; i++) {
-    if (isRangeContained(pairs[i])) {
+    if (isPairOverlapping(pairs[i])) {
         totalContainedPairs += 1;
     }
 }

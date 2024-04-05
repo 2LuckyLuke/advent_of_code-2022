@@ -26,6 +26,16 @@ function getPairFromString(pairString: string): Pair {
     return pair;
 }
 
+function isPairOverlapping(pair: Pair): boolean {
+    if (
+        (pair.firstRange.end >= pair.secondRange.start && pair.firstRange.start <= pair.secondRange.end) ||
+        (pair.secondRange.end >= pair.firstRange.start && pair.secondRange.start <= pair.firstRange.end)
+    ) {
+        return true;
+    }
+    return false;
+}
+
 function isRangeContained(pair: Pair): boolean {
     if (
         (pair.firstRange.start <= pair.secondRange.start && pair.firstRange.end >= pair.secondRange.end) ||
@@ -47,7 +57,7 @@ const pairs = pairStrings.map((pairString) => getPairFromString(pairString));
 let totalContainedPairs = 0;
 
 for (let i = 0; i < pairs.length; i++) {
-    if (isRangeContained(pairs[i])) {
+    if (isPairOverlapping(pairs[i])) {
         totalContainedPairs += 1;
     }
 }
