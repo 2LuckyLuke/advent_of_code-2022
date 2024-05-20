@@ -54,9 +54,13 @@ function parseInstructions(instructionList) {
     });
 }
 function executeInstruction(stacks, instruction) {
-    var _a;
+    var _a, _b;
+    const tempStack = { crates: [] };
     for (let i = 0; i < instruction.amount; i++) {
-        stacks[instruction.goal].crates.push((_a = stacks[instruction.start].crates.pop()) !== null && _a !== void 0 ? _a : 'no element');
+        tempStack.crates.push((_a = stacks[instruction.start].crates.pop()) !== null && _a !== void 0 ? _a : 'no element');
+    }
+    for (let i = 0; i < instruction.amount; i++) {
+        stacks[instruction.goal].crates.push((_b = tempStack.crates.pop()) !== null && _b !== void 0 ? _b : 'no element');
     }
     return stacks;
 }

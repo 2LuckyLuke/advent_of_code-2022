@@ -43,8 +43,12 @@ function parseInstructions(instructionList: string): Instruction[] {
 }
 
 function executeInstruction(stacks: Stack[], instruction: Instruction): Stack[] {
+    const tempStack: Stack = { crates: [] };
     for (let i = 0; i < instruction.amount; i++) {
-        stacks[instruction.goal].crates.push(stacks[instruction.start].crates.pop() ?? 'no element');
+        tempStack.crates.push(stacks[instruction.start].crates.pop() ?? 'no element');
+    }
+    for (let i = 0; i < instruction.amount; i++) {
+        stacks[instruction.goal].crates.push(tempStack.crates.pop() ?? 'no element');
     }
     return stacks;
 }
