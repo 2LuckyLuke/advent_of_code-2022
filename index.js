@@ -25,17 +25,22 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
-function isSequenceDiffrent(a, b, c, d) {
-    if (a === b || a === c || a === d || b === c || b === d || c === d) {
-        return false;
+function isSequenceDiffrent(sequence) {
+    for (let i = 0; i < sequence.length; i++) {
+        const cutSequence = sequence.replace(new RegExp(`${sequence.charAt(i)}`, 'g'), '');
+        if (cutSequence.length < sequence.length - 1) {
+            return false;
+        }
     }
+    console.log(sequence);
     return true;
 }
 /*---------Run code Below----------*/
 const input = fs.readFileSync(path.join(__dirname, './in.txt'), { encoding: 'utf-8' });
-for (let i = 0; i < input.length - 3; i++) {
-    if (isSequenceDiffrent(input.charAt(i), input.charAt(i + 1), input.charAt(i + 2), input.charAt(i + 3))) {
-        console.log(i + 4);
+const messageLength = 14;
+for (let i = 0; i < input.length - (messageLength - 1); i++) {
+    if (isSequenceDiffrent(input.substring(i, i + messageLength))) {
+        console.log(i + messageLength);
         i = input.length;
     }
 }
